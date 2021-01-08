@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="index.css">
+  <title>Fabric Example</title>
+</head>
+<body>
+
+  <!--begin::layout-->
+  <div class="layout">
+
+    <!--begin::header-->
+    <header class="header">
+      <div class="container">
+        <ul class="control">
+          <li>
+            <button action-reset class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="最初に戻します">
+              <i class="fas fa-retweet fa-2x"></i>
+              <label><i class="far fa-keyboard mr-1"></i>CTRL+0</label>
+            </button>
+          </li>
+          <li>
+            <button action-undo class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="元に戻します" disabled>
+              <i class="fas fa-undo fa-2x"></i>
+              <label><i class="far fa-keyboard mr-1"></i>CTRL+Z</label>
+            </button>
+          </li>
+          <li>
+            <button action-redo class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="やり直します" disabled>
+              <i class="fas fa-redo fa-2x"></i>
+              <label><i class="far fa-keyboard mr-1"></i>CTRL+Y</label>
+            </button>
+          </li>
+          <li>
+            <button action-save class="btn btn-icon btn-primary" type="button" data-toggle="tooltip" data-placement="bottom" title="変更を保存する">
+              <i class="fas fa-save fa-2x"></i>
+              <label><i class="far fa-keyboard mr-1"></i>CTRL+S</label>
+            </button>
+          </li>
+          <li class="ml-auto">
+            <label class="mb-0"><i class="fas fa-pen mr-2"></i>直線の幅</label>
+            <div class="input-group input-line-width">
+              <input type="range" class="custom-range" min="8" max="60" value="30" step="1" id="lineWidth">
+              <div class="input-group-append">
+                <div class="input-group-text"><output id="lineWidthText">40</output>px</div>
+              </div>
+            </div>
+            <label class="small"><i class="fas fa-mouse mr-1"></i>マウスホイールでも変更できます。</label>
+          </li>
+        </ul>
+      </label>
+    </header>
+    <!--end::header-->
+
+    <!--begin::main-->
+    <main class="main">
+      <div id="stage" class="stage">
+        <canvas id="canvas" class="canvas"></canvas>
+        <div id="cursor" class="cursor"></div>
+        <div id="follow" class="follow"></div>
+      </div>
+    </main>
+    <!--end::main-->
+
+  </div>
+  <!--end::layout-->
+
+  <script src="node_modules/fabric/dist/fabric.min.js"></script>
+  <script src="node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="node_modules/jquery.hotkeys/jquery.hotkeys.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
