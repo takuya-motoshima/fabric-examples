@@ -1,19 +1,36 @@
 (async () => {
-  async function setupCanvas() {
-    const canvas = new fabric.Canvas('canvas', {
-      selection: false,
-      editable: false
-    });
+
+  async function loadImg(source) {
     const img = new Image();
-    img.src = 'photo.jpg';
+    img.src = source;
     await new Promise(resolve => $(img).on('load', () => resolve(img)));
-    canvas.setDimensions({ width: img.width, height:img.height });
+    return img;
+  }
+
+  async function setupCanvas() {
+    const canvas = new fabric.Canvas('canvas', { selection: false, editable: false });
+    const img = await loadImg('photo.png');
+    // console.log(`Conainer size : ${$container.width()}/${$container.height()}`);
+    // console.log(`Image size: ${img.width}/${img.height}`);
+    let width = img.width;
+    let height = img.height;
+    canvas.setDimensions({ width, height });
+    // const fImg = new fabric.Image(img);
+    // fImg.set({
+    //    width: canvas.getWidth(), 
+    //    height: canvas.getHeight(), 
+    //    originX: 'left', 
+    //    scaleX : canvas.getWidth()/img.width,   //new update
+    //    scaleY: canvas.getHeight()/img.height,   //new update
+    //    originY: 'top'
+    //  });
+    // canvas.setBackgroundImage(fImg);
     canvas.setBackgroundImage(new fabric.Image(img));
     canvas.renderAll();
     setupLine(canvas);
     setupCursor();
     setShortcut(canvas);
-    $(canvas.getElement()).addClass('initialized');
+    // $(canvas.getElement()).addClass('initialized');
     return canvas;
   }
 
@@ -121,13 +138,12 @@
       const input = $('<input />', { type: 'file', accept: 'image/*' }).on('change', async event => {
         const  file = event.currentTarget.files[0];
         input.val('');
-        const img = new Image();
-        img.src = await new Promise(resolve => {
+        const dataUrl = await new Promise(resolve => {
           const reader = new FileReader();
           $(reader).on('load', () => resolve(reader.result));
           reader.readAsDataURL(file);
         });
-        await new Promise(resolve => $(img).on('load', () => resolve(img)));
+        const img = await loadImg(dataUrl);
         reset();
         canvas.setDimensions({ width: img.width, height:img.height });
         canvas.setBackgroundImage(new fabric.Image(img));
@@ -161,6 +177,7 @@
 
   const $lineWidth = $('#lineWidth');
   $('[data-toggle="tooltip"]').tooltip()
+  const $container = $('#main');
   const canvas = await setupCanvas();
   window.canvas = canvas;
 })();
