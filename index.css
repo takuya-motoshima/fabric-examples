@@ -23,7 +23,6 @@ body {
   justify-content: center;
   width: 64px;
   height: 64px;
-  border-radius: 0;
 }
 
   @media (max-width: 575.98px) {
@@ -93,7 +92,7 @@ body {
       cursor: none;
     }
 
-      .canvas {
+      .canvas.initialized {
         box-shadow: 0 0 0 1px #000;
       }
 

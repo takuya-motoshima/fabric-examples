@@ -7,15 +7,13 @@
     const img = new Image();
     img.src = 'photo.jpg';
     await new Promise(resolve => $(img).on('load', () => resolve(img)));
-    canvas.setDimensions({
-      width: img.width,
-      height:img.height
-    });
+    canvas.setDimensions({ width: img.width, height:img.height });
     canvas.setBackgroundImage(new fabric.Image(img));
     canvas.renderAll();
     setupLine(canvas);
     setupCursor();
     setShortcut(canvas);
+    $(canvas.getElement()).addClass('initialized');
     return canvas;
   }
 
@@ -115,14 +113,34 @@
     }
 
     function save() {
-      alert('保存しました。');
+      alert('The image was saved.');
+    }
+
+    function upload(event) {
+      if (event) event.preventDefault();
+      const input = $('<input />', { type: 'file', accept: 'image/*' }).on('change', async event => {
+        const  file = event.currentTarget.files[0];
+        input.val('');
+        const img = new Image();
+        img.src = await new Promise(resolve => {
+          const reader = new FileReader();
+          $(reader).on('load', () => resolve(reader.result));
+          reader.readAsDataURL(file);
+        });
+        await new Promise(resolve => $(img).on('load', () => resolve(img)));
+        reset();
+        canvas.setDimensions({ width: img.width, height:img.height });
+        canvas.setBackgroundImage(new fabric.Image(img));
+        canvas.renderAll();
+      });
+      input.trigger('click');
     }
 
     const stack = [];
     let isUndo = false;
     let isRedo = false;
-    const $undo = $('[action-undo]:first');
-    const $redo = $('[action-redo]:first');
+    const $undo = $('[on-undo]:first');
+    const $redo = $('[on-redo]:first');
     canvas.on('object:added', () => {
       if (!isRedo) stack.length = 0;
       if (isUndo) $redo.prop('disabled', true);
@@ -134,9 +152,11 @@
       .on('keydown', null, 'Ctrl+z', () => undo())
       .on('keydown', null, 'Ctrl+y', () => redo())
       .on('keydown', null, 'Ctrl+s', () => save())
-      .on('click', '[action-reset]', () => reset())
-      .on('click', '[action-undo]', () => undo())
-      .on('click', '[action-save]', () => save());
+      .on('keydown', null, 'Ctrl+u', event => upload(event))
+      .on('click', '[on-reset]', () => reset())
+      .on('click', '[on-undo]', () => undo())
+      .on('click', '[on-save]', () => save())
+      .on('click', '[on-upload]', () => upload());
   }
 
   const $lineWidth = $('#lineWidth');

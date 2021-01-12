@@ -18,38 +18,44 @@
       <div class="container">
         <ul class="control">
           <li>
-            <button action-reset class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="最初に戻します">
+            <button on-reset class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="Reset">
               <i class="fas fa-retweet fa-2x"></i>
-              <label><i class="far fa-keyboard mr-1"></i>CTRL+0</label>
+              <label>Ctrl+0</label>
             </button>
           </li>
           <li>
-            <button action-undo class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="元に戻します" disabled>
+            <button on-undo class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="Undo" disabled>
               <i class="fas fa-undo fa-2x"></i>
-              <label><i class="far fa-keyboard mr-1"></i>CTRL+Z</label>
+              <label>Ctrl+Z</label>
             </button>
           </li>
           <li>
-            <button action-redo class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="やり直します" disabled>
+            <button on-redo class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="Redo" disabled>
               <i class="fas fa-redo fa-2x"></i>
-              <label><i class="far fa-keyboard mr-1"></i>CTRL+Y</label>
+              <label>Ctrl+Y</label>
             </button>
           </li>
           <li>
-            <button action-save class="btn btn-icon btn-primary" type="button" data-toggle="tooltip" data-placement="bottom" title="変更を保存する">
+            <button on-upload class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="Upload">
+              <i class="fas fa-upload fa-2x"></i>
+              <label>Ctrl+U</label>
+            </button>
+          </li>
+          <li>
+            <button on-save class="btn btn-icon btn-primary" type="button" data-toggle="tooltip" data-placement="bottom" title="Save">
               <i class="fas fa-save fa-2x"></i>
-              <label><i class="far fa-keyboard mr-1"></i>CTRL+S</label>
+              <label>Ctrl+S</label>
             </button>
           </li>
           <li class="ml-auto">
-            <label class="mb-0"><i class="fas fa-pen mr-2"></i>直線の幅</label>
+            <label class="mb-0"><i class="fas fa-pen mr-2"></i>Line width</label>
             <div class="input-group input-line-width">
               <input type="range" class="custom-range" min="8" max="60" value="30" step="1" id="lineWidth">
               <div class="input-group-append">
                 <div class="input-group-text"><output id="lineWidthText">40</output>px</div>
               </div>
             </div>
-            <label class="small"><i class="fas fa-mouse mr-1"></i>マウスホイールでも変更できます。</label>
+            <label class="small">You can also change it with the mouse wheel.</label>
           </li>
         </ul>
       </label>
