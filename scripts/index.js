@@ -31,7 +31,8 @@ import Canvas from './Canvas.js';
   /**
    * Save.
    */
-  function save() {
+  function save(e) {
+    if (e) e.preventDefault();
     alert('The image was saved.');
   }
 
@@ -68,7 +69,7 @@ import Canvas from './Canvas.js';
     .on('keydown', null, 'Ctrl+0', () => reset())
     .on('keydown', null, 'Ctrl+z', () => undo())
     .on('keydown', null, 'Ctrl+y', () => redo())
-    .on('keydown', null, 'Ctrl+s', () => save())
+    .on('keydown', null, 'Ctrl+s', e => save(e))
     .on('keydown', null, 'Ctrl+u', e => upload(e))
     .on('click', '[on-reset]', () => reset())
     .on('click', '[on-undo]', () => undo())
