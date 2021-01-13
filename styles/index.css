@@ -93,10 +93,6 @@ body {
       cursor: none;
     }
 
-      /*.canvas.initialized {
-        box-shadow: 0 0 0 1px #000;
-      }*/
-
       .cursor, .follow {
         position: absolute;
         border-radius: 50%;
