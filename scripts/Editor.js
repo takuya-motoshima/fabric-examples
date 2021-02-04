@@ -152,7 +152,8 @@ export default class {
    * Reset.
    */
   reset() {
-    this.canvas.remove(...this.canvas.getObjects());
+    this.canvas.clear();
+    // this.canvas.remove(...this.canvas.getObjects());
     this.isUndo = false;
     this.isRedo = false;
     this.stack.length = 0;
