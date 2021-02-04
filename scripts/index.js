@@ -1,4 +1,4 @@
-import Canvas from './Canvas.js';
+import Editor from './Editor.js';
 
 (async () => {
 
@@ -6,26 +6,26 @@ import Canvas from './Canvas.js';
    * Undo all edits on the canvas.
    */
   function reset() {
-    canvas.reset();
-    undoBtn.prop('disabled', true);
-    redoBtn.prop('disabled', true);
+    editor.reset();
+    undoButton.prop('disabled', true);
+    redoButton.prop('disabled', true);
   }
 
   /**
    * Undo.
    */
   function undo() {
-    if (!canvas.undo()) return;
-    undoBtn.prop('disabled', !canvas.hasDrawingObject());
-    redoBtn.prop('disabled', !canvas.hasStack());
+    if (!editor.undo()) return;
+    undoButton.prop('disabled', !editor.hasDrawingObject());
+    redoButton.prop('disabled', !editor.hasStack());
   }
 
   /**
    * Redo.
    */
   function redo() {
-    if (!canvas.redo()) return;
-    redoBtn.prop('disabled', !canvas.hasStack());
+    if (!editor.redo()) return;
+    redoButton.prop('disabled', !editor.hasStack());
   }
 
   /**
@@ -50,21 +50,24 @@ import Canvas from './Canvas.js';
         reader.readAsDataURL(file);
       });
       reset();
-      await canvas.drawCanvas(dataUrl);
+      await editor.draw(dataUrl);
     });
     input.trigger('click');
   }
 
   // Main procedure.
   $('[data-toggle="tooltip"]').tooltip()
-  const canvas = new Canvas();
-  canvas.on('added', () => {
-    if (canvas.isUndo) redoBtn.prop('disabled', true);
-    undoBtn.prop('disabled', false);
+  const editor = new Editor();
+  editor.on('added', () => {
+    if (editor.isUndo) redoButton.prop('disabled', true);
+    undoButton.prop('disabled', false);
   });
-  await canvas.drawCanvas('media/photo.png');
-  const undoBtn = $('[on-undo]:first');
-  const redoBtn = $('[on-redo]:first');
+
+  await editor.draw('media/photo.png');
+  const undoButton = $('[on-undo]:first');
+  const redoButton = $('[on-redo]:first');
+
+
   $(document)
     .on('keydown', null, 'Ctrl+0', () => reset())
     .on('keydown', null, 'Ctrl+z', () => undo())
@@ -75,7 +78,4 @@ import Canvas from './Canvas.js';
     .on('click', '[on-undo]', () => undo())
     .on('click', '[on-save]', () => save())
     .on('click', '[on-upload]', () => upload());
-
-   window.canvas = canvas;
-
 })();

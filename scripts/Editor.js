@@ -1,25 +1,45 @@
 export default class {
 
   constructor(options) {
+
+    // Initialize options.
     options = Object.assign({
       id: 'canvas',
       lineWidthInputId: 'lineWidth'
     }, options);
-    this.canvas = new fabric.Canvas(options.id, {
+
+    // fabric object.
+    window.canvas = this.canvas = new fabric.Canvas(options.id, {
       selection: false,
       editable: false
     });
+
+    // Line thickness input element.
     this.lineWidth = $(`#${options.lineWidthInputId}`);
-    this.drawLine();
-    this.showCursor();
+
+    // Initialization of the line drawing process.
+    this.initDrawLine();
+
+    // Initialize the cursor to be displayed on the canvas.
+    this.initCursor();
+
+    // Initialize the cursor to be displayed on the canvas.
     this.isUndo = false;
+
+    // True if Redo operation was performed immediately before.
     this.isRedo = false;
+
+    // Stack of modified image information.
     this.stack = [];
+
+    // Monitor the operation of adding objects to the canvas.
     this.canvas.on('object:added', () => {
       if (!this.isRedo) this.stack.length = 0;
       this.isRedo = false;
       this.handles.added();
     });
+
+    // Event handler.
     this.handles = {};
   }
 
@@ -31,9 +51,9 @@ export default class {
   }
 
   /**
-   * Draw a line on the canvas.
+   * Initialization of the line drawing process..
    */
-  drawLine() {
+  initDrawLine() {
     const canvas = this.canvas;
     let line = undefined;
     let active = false;
@@ -62,25 +82,25 @@ export default class {
 
 
   /**
-   * Show line width cursor.
+   * Initialize the cursor to be displayed on the canvas.
    */
-  showCursor() {
+  initCursor() {
     const stage = $(this.canvas.getElement()).parent();
     const cursor = $('<div />', { class: 'cursor' }).appendTo(stage);
     const follow = $('<div />', { class: 'follow' }).appendTo(stage);
     stage
       .on('mouseenter', () => stage.addClass('active'))
       .on('mouseleave', () => stage.removeClass('active'))
-      .on('mousemove', e => {
-        const { left, top } = e.currentTarget.getBoundingClientRect();
-        const x = e.clientX - left;
-        const y = e.clientY - top;
+      .on('mousemove', event => {
+        const { left, top } = event.currentTarget.getBoundingClientRect();
+        const x = event.clientX - left;
+        const y = event.clientY - top;
         cursor.css('transform', `translate(${x}px, ${y}px)`);
         follow.css('transform', `translate(${x}px, ${y}px)`);
       })
-      .on('wheel', e => {
-        e.preventDefault();
-        let value = parseInt(this.lineWidth.val(), 10) + (e.originalEvent.wheelDelta > 0 ? 1 : -1);
+      .on('wheel', event => {
+        event.preventDefault();
+        let value = parseInt(this.lineWidth.val(), 10) + (event.originalEvent.wheelDelta > 0 ? 1 : -1);
         const min = parseInt(this.lineWidth.attr('min'), 10);
         const max = parseInt(this.lineWidth.attr('max'), 10);
         if (min > value) value = min;
@@ -95,7 +115,7 @@ export default class {
   /**
    * Draw canvas image.
    */
-  async drawCanvas(url) {
+  async draw(url) {
     const img = new Image();
     img.src = url;
     await new Promise(resolve => $(img).on('load', resolve));
