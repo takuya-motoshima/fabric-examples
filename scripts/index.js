@@ -4,30 +4,30 @@ import Canvas from './Canvas.js';
 
   function reset() {
     canvas.reset();
-    undobutton.prop('disabled', true);
-    redobutton.prop('disabled', true);
+    undobtn.prop('disabled', true);
+    redobtn.prop('disabled', true);
   }
 
   function undo() {
     if (!canvas.undo()) return;
-    undobutton.prop('disabled', !canvas.hasDrawingObject());
-    redobutton.prop('disabled', !canvas.hasStack());
+    undobtn.prop('disabled', !canvas.hasDrawingObject());
+    redobtn.prop('disabled', !canvas.hasStack());
   }
 
   function redo() {
     if (!canvas.redo()) return;
-    redobutton.prop('disabled', !canvas.hasStack());
+    redobtn.prop('disabled', !canvas.hasStack());
   }
 
-  function save(e) {
-    if (e) e.preventDefault();
+  function save(event) {
+    if (event) event.preventDefault();
     alert('The image was saved.');
   }
 
-  function upload(e) {
-    if (e) e.preventDefault();
-    const input = $('<input />', { type: 'file', accept: 'image/*' }).on('change', async e => {
-      const  file = e.currentTarget.files[0];
+  function upload(event) {
+    if (event) event.preventDefault();
+    const input = $('<input />', { type: 'file', accept: 'image/*' }).on('change', async event => {
+      const  file = event.currentTarget.files[0];
       input.val('');
       const dataUrl = await new Promise(resolve => {
         const reader = new FileReader();
@@ -43,19 +43,19 @@ import Canvas from './Canvas.js';
   $('[data-toggle="tooltip"]').tooltip()
   const canvas = new Canvas();
   canvas.on('added', () => {
-    if (canvas.isUndo) redobutton.prop('disabled', true);
-    undobutton.prop('disabled', false);
+    if (canvas.isUndo) redobtn.prop('disabled', true);
+    undobtn.prop('disabled', false);
   });
 
-  await canvas.draw('media/photo.png');
-  const undobutton = $('[on-undo]:first');
-  const redobutton = $('[on-redo]:first');
+  await canvas.draw('images/sample.png');
+  const undobtn = $('[on-undo]:first');
+  const redobtn = $('[on-redo]:first');
   $(document)
     .on('keydown', null, 'Ctrl+0', () => reset())
     .on('keydown', null, 'Ctrl+z', () => undo())
     .on('keydown', null, 'Ctrl+y', () => redo())
-    .on('keydown', null, 'Ctrl+s', e => save(e))
-    .on('keydown', null, 'Ctrl+u', e => upload(e))
+    .on('keydown', null, 'Ctrl+s', event => save(event))
+    .on('keydown', null, 'Ctrl+u', event => upload(event))
     .on('click', '[on-reset]', () => reset())
     .on('click', '[on-undo]', () => undo())
     .on('click', '[on-save]', () => save())
