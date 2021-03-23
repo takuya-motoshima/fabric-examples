@@ -1,44 +1,29 @@
-import Editor from './Editor.js';
+import Canvas from './Canvas.js';
 
 (async () => {
 
-  /**
-   * Undo all edits on the canvas.
-   */
   function reset() {
-    editor.reset();
-    undoButton.prop('disabled', true);
-    redoButton.prop('disabled', true);
+    canvas.reset();
+    undobutton.prop('disabled', true);
+    redobutton.prop('disabled', true);
   }
 
-  /**
-   * Undo.
-   */
   function undo() {
-    if (!editor.undo()) return;
-    undoButton.prop('disabled', !editor.hasDrawingObject());
-    redoButton.prop('disabled', !editor.hasStack());
+    if (!canvas.undo()) return;
+    undobutton.prop('disabled', !canvas.hasDrawingObject());
+    redobutton.prop('disabled', !canvas.hasStack());
   }
 
-  /**
-   * Redo.
-   */
   function redo() {
-    if (!editor.redo()) return;
-    redoButton.prop('disabled', !editor.hasStack());
+    if (!canvas.redo()) return;
+    redobutton.prop('disabled', !canvas.hasStack());
   }
 
-  /**
-   * Save.
-   */
   function save(e) {
     if (e) e.preventDefault();
     alert('The image was saved.');
   }
 
-  /**
-   * Upload image.
-   */
   function upload(e) {
     if (e) e.preventDefault();
     const input = $('<input />', { type: 'file', accept: 'image/*' }).on('change', async e => {
@@ -50,24 +35,21 @@ import Editor from './Editor.js';
         reader.readAsDataURL(file);
       });
       reset();
-      await editor.draw(dataUrl);
+      await canvas.draw(dataUrl);
     });
     input.trigger('click');
   }
 
-  // Main procedure.
   $('[data-toggle="tooltip"]').tooltip()
-  const editor = new Editor();
-  editor.on('added', () => {
-    if (editor.isUndo) redoButton.prop('disabled', true);
-    undoButton.prop('disabled', false);
+  const canvas = new Canvas();
+  canvas.on('added', () => {
+    if (canvas.isUndo) redobutton.prop('disabled', true);
+    undobutton.prop('disabled', false);
   });
 
-  await editor.draw('media/photo.png');
-  const undoButton = $('[on-undo]:first');
-  const redoButton = $('[on-redo]:first');
-
-
+  await canvas.draw('media/photo.png');
+  const undobutton = $('[on-undo]:first');
+  const redobutton = $('[on-redo]:first');
   $(document)
     .on('keydown', null, 'Ctrl+0', () => reset())
     .on('keydown', null, 'Ctrl+z', () => undo())

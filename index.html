@@ -15,55 +15,28 @@
 
     <!--begin::header-->
     <header class="header">
-      <div class="container">
-        <ul class="control">
-          <li>
-            <button on-reset class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="Reset">
-              <i class="fas fa-retweet fa-2x"></i>
-              <label>Ctrl+0</label>
-            </button>
-          </li>
-          <li>
-            <button on-undo class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="Undo" disabled>
-              <i class="fas fa-undo fa-2x"></i>
-              <label>Ctrl+Z</label>
-            </button>
-          </li>
-          <li>
-            <button on-redo class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="Redo" disabled>
-              <i class="fas fa-redo fa-2x"></i>
-              <label>Ctrl+Y</label>
-            </button>
-          </li>
-          <li>
-            <button on-upload class="btn btn-icon btn-secondary" type="button" data-toggle="tooltip" data-placement="bottom" title="Upload">
-              <i class="fas fa-upload fa-2x"></i>
-              <label>Ctrl+U</label>
-            </button>
-          </li>
-          <li>
-            <button on-save class="btn btn-icon btn-primary" type="button" data-toggle="tooltip" data-placement="bottom" title="Save">
-              <i class="fas fa-save fa-2x"></i>
-              <label>Ctrl+S</label>
-            </button>
-          </li>
-          <li class="ml-auto">
-            <label class="mb-0"><i class="fas fa-pen mr-2"></i>Line width</label>
-            <div class="input-group input-line-width">
-              <input type="range" class="custom-range" min="8" max="60" value="30" step="1" id="lineWidth">
-              <div class="input-group-append">
-                <div class="input-group-text"><output id="lineWidthText">40</output>px</div>
-              </div>
+      <div class="container-fluid py-2">
+        <div class="row align-items-center">
+          <div class="col-auto">
+            <div class="btn-group">
+              <button on-reset class="btn btn-primary" type="button">Reset (CTRL+0)</button>
+              <button on-undo class="btn btn-primary" type="button" disabled>Undo (CTRL+Z)</button>
+              <button on-redo class="btn btn-primary" type="button" disabled>Redo (CTRL+Y)</button>
+              <button on-upload class="btn btn-primary" type="button">Upload (CTRL+U)</button>
+              <button on-save class="btn btn-primary" type="button">Save (CTRL+S)</button>
             </div>
-            <label class="small">You can also change it with the mouse wheel.</label>
-          </li>
-        </ul>
-      </label>
+          </div>
+          <div class="col-auto ml-auto mt-2 mt-sm-0">
+            <label class="d-block">Linewidth (Change with mouse wheel)</label>
+            <input type="range" class="range w-100" min="8" max="60" value="30" step="1" id="linewidth">
+          </div>
+        </div>
+      </div>
     </header>
     <!--end::header-->
 
     <!--begin::main-->
-    <main id="main" class="main">
+    <main id="main" class="main my-2">
       <canvas id="canvas" class="canvas"></canvas>
     </main>
     <!--end::main-->
