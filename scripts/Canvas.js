@@ -61,14 +61,18 @@ export default class {
   /**
    * Draw canvas image.
    */
-  async draw(url) {
-    // Image MimeType.
-    this.mimetype = url.split('.').pop();
-    // console.log(`Mimetype: ${this.mimetype}`);
-
-    // file name.
-    this.filename = url.split("/").pop();
-    // console.log(`Filename: ${this.filename}`);
+  async draw(url, filename = undefined) {
+    // Check the format of the image URL.
+    if (/^data:image\/[a-z]+;base64,..*$/.test(url)){
+      // For DataURl
+      if (!filename) throw new Error('File name is required for DataURL');
+      this.mimetype = url.match(/^data:image\/([a-z]+);base64,..*$/)[1];
+      this.filename = filename;
+    } else {
+      // For URL
+      this.mimetype = url.split('.').pop();
+      this.filename = url.split("/").pop();
+    }
 
     // The crossOrigin attribute is required to edit images of other domains with Canvas and output (canvas # toDataURL).
     const img = new Image();

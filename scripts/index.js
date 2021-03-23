@@ -27,15 +27,15 @@ import Canvas from './Canvas.js';
   function upload(event) {
     if (event) event.preventDefault();
     const input = $('<input />', { type: 'file', accept: 'image/*' }).on('change', async event => {
-      const  file = event.currentTarget.files[0];
+      const file = event.currentTarget.files[0];
       input.val('');
-      const dataUrl = await new Promise(resolve => {
+      const dataURL = await new Promise(resolve => {
         const reader = new FileReader();
         $(reader).on('load', () => resolve(reader.result));
         reader.readAsDataURL(file);
       });
       reset();
-      await canvas.draw(dataUrl);
+      await canvas.draw(dataURL, file.name);
     });
     input.trigger('click');
   }
