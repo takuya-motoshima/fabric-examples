@@ -21,11 +21,11 @@ import Canvas from './Canvas.js';
 
   function save(event) {
     if (event) event.preventDefault();
-    alert('The image was saved.');
+    canvas.download();
   }
 
   function upload(event) {
-    if (event) event.preventDefault();
+      
     const input = $('<input />', { type: 'file', accept: 'image/*' }).on('change', async event => {
       const  file = event.currentTarget.files[0];
       input.val('');
@@ -48,6 +48,7 @@ import Canvas from './Canvas.js';
   });
 
   await canvas.draw('images/sample.png');
+  // await canvas.draw('images/large.jpg');
   const undobtn = $('[on-undo]:first');
   const redobtn = $('[on-redo]:first');
   $(document)

@@ -1,0 +1,40 @@
+.canvas-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: none;
+}
+
+  .cursor,
+  .follow {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .canvas-container:not(.active) .cursor,
+  .canvas-container:not(.active) .follow {
+    display: none;
+  }
+
+  .cursor {
+    top: -4px;
+    left: -4px;
+    width: 8px;
+    height: 8px;
+    background: #000;
+    z-index: 1001;
+  }
+
+  .follow {
+    top: -20px;
+    left: -20px;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, .5);
+    z-index: 1000;
+    transform-origin: center;
+    transition: transform .1s, width .5s, height .5s, background-color .5s;
+    transition-timing-function: ease-out;
+  }

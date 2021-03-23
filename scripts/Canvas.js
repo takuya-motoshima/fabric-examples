@@ -10,6 +10,10 @@ export default class {
     // Initialize options.
     options = Object.assign({canvasEl: 'canvas', linewidthEl: 'linewidth'}, options);
 
+    // Wrapper element.
+    this.wrapper = $(`#${options.canvasEl}`).parent();
+    console.log('this.wrapper=', this.wrapper);
+
     // fabric object.
     this.canvas = new fabric.Canvas(options.canvasEl, {selection: false, editable: false});
 
@@ -53,14 +57,40 @@ export default class {
    * Draw canvas image.
    */
   async draw(url) {
+    // Image MimeType.
+    this.mimetype = url.split('.').pop();
+    console.log(`Mimetype: ${this.mimetype}`);
+
+    // file name.
+    this.filename = url.split("/").pop();
+    console.log(`Filename: ${this.filename}`);
+
+    // The crossOrigin attribute is required to edit images of other domains with Canvas and output (canvas # toDataURL).
     const img = new Image();
+    img.crossOrigin  = 'use-credentials';
     img.src = url;
     await new Promise(resolve => $(img).on('load', resolve));
+
+    // Draw image on canvas.
     this.canvas
       .remove(...this.canvas.getObjects())
       .setDimensions({ width: img.width, height: img.height })
       .setBackgroundImage(new fabric.Image(img))
       .renderAll();
+  }
+
+  /**
+   * Download canvas image.
+   */
+  download() {
+    const dataURL = this.canvas.toDataURL({format: this.mimetype, left: 0, top: 0});
+    const bin = atob(dataURL.split(',')[1]);
+    const buffer = new Uint8Array(bin.length);
+    for (let i=0; i<bin.length; i++)
+      buffer[i] = bin.charCodeAt(i);
+    const blob = new Blob([buffer.buffer], {type: `image/${this.mimetype}`});
+    const link = $('<a />', {href: URL.createObjectURL(blob), download: this.filename});
+    link.get(0).click();
   }
 
   /**
