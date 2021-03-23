@@ -25,7 +25,7 @@ import Canvas from './Canvas.js';
   }
 
   function upload(event) {
-      
+    if (event) event.preventDefault();
     const input = $('<input />', { type: 'file', accept: 'image/*' }).on('change', async event => {
       const  file = event.currentTarget.files[0];
       input.val('');
@@ -47,8 +47,8 @@ import Canvas from './Canvas.js';
     undobtn.prop('disabled', false);
   });
 
-  await canvas.draw('images/sample.png');
-  // await canvas.draw('images/large.jpg');
+  // await canvas.draw('images/sample.png');
+  await canvas.draw('images/large.jpg');
   const undobtn = $('[on-undo]:first');
   const redobtn = $('[on-redo]:first');
   $(document)

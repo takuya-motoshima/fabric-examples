@@ -4,6 +4,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
   cursor: none;
+  /*overflow: hidden;*/
+
+  /*Debug boundaries*/
+  /*box-shadow: 1px 1px 1px #007bff, -1px -1px 1px #007bff;*/
 }
 
   .cursor,

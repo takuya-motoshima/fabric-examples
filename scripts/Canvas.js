@@ -11,14 +11,19 @@ export default class {
     options = Object.assign({canvasEl: 'canvas', linewidthEl: 'linewidth'}, options);
 
     // Wrapper element.
-    this.wrapper = $(`#${options.canvasEl}`).parent();
-    console.log('this.wrapper=', this.wrapper);
+    this._wrapper = $(`#${options.canvasEl}`).parent();
 
     // fabric object.
-    this.canvas = new fabric.Canvas(options.canvasEl, {selection: false, editable: false});
+    this._canvas = new fabric.Canvas(options.canvasEl, {selection: false, editable: false});
+
+    // Added canvas to global object for debugging.
+    globalThis.canvas = this._canvas;
 
     // Line thickness input element.
-    this.linewidthEl = $(`#${options.linewidthEl}`);
+    this._linewidthEl = $(`#${options.linewidthEl}`);
+
+    // If the actual dimensions of the Canvas are larger than the apparent size, increase the line width.
+    this._lineScale = 1;
 
     // Initialization of the line drawing process.
     this._initDrawLine();
@@ -27,30 +32,30 @@ export default class {
     this._initCursor();
 
     // Initialize the cursor to be displayed on the canvas.
-    this.isundo = false;
+    this._isUndo = false;
 
     // True if Redo operation was performed immediately before.
-    this.isredo = false;
+    this._isRedo = false;
 
     // Stack of modified image information.
-    this.stack = [];
+    this._stack = [];
 
     // Monitor the operation of adding objects to the canvas.
-    this.canvas.on('object:added', () => {
-      if (!this.isredo) this.stack.length = 0;
-      this.isredo = false;
-      this.handles.added();
+    this._canvas.on('object:added', () => {
+      if (!this._isRedo) this._stack.length = 0;
+      this._isRedo = false;
+      this._handles.added();
     });
 
     // Event handler.
-    this.handles = {};
+    this._handles = {};
   }
 
   /**
    * Set event.
    */
   on(type, callback) {
-    this.handles[type] = callback;
+    this._handles[type] = callback;
   }
 
   /**
@@ -59,11 +64,11 @@ export default class {
   async draw(url) {
     // Image MimeType.
     this.mimetype = url.split('.').pop();
-    console.log(`Mimetype: ${this.mimetype}`);
+    // console.log(`Mimetype: ${this.mimetype}`);
 
     // file name.
     this.filename = url.split("/").pop();
-    console.log(`Filename: ${this.filename}`);
+    // console.log(`Filename: ${this.filename}`);
 
     // The crossOrigin attribute is required to edit images of other domains with Canvas and output (canvas # toDataURL).
     const img = new Image();
@@ -71,19 +76,53 @@ export default class {
     img.src = url;
     await new Promise(resolve => $(img).on('load', resolve));
 
+    // Calculate the image size that fits in the window.
+    const wrapperWidth = this._wrapper.width();
+    const wrapperHeight = this._wrapper.height();
+    const imgWidth = img.width;
+    const imgHeight = img.height;
+    let cssWidth = imgWidth;
+    let cssHeight = imgHeight;
+    // console.log(`Wrapper width: ${wrapperWidth}`);
+    // console.log(`Wrapper height: ${wrapperHeight}`);
+    // console.log(`Img width: ${imgWidth}`);
+    // console.log(`Img height: ${imgHeight}`);
+    if (imgWidth > wrapperWidth || imgHeight > wrapperHeight) {
+      if (imgWidth > imgHeight) {
+        // If the image is landscape.
+        cssWidth = wrapperWidth;
+        cssHeight = imgHeight * wrapperWidth / imgWidth;
+      } else {
+        // If the image is portrait.
+        cssWidth = imgWidth * wrapperHeight / imgHeight;
+        cssHeight = wrapperHeight;
+      }
+    }
+    // console.log(`CSS width: ${cssWidth}`);
+    // console.log(`CSS height: ${cssHeight}`);
+
     // Draw image on canvas.
-    this.canvas
-      .remove(...this.canvas.getObjects())
-      .setDimensions({ width: img.width, height: img.height })
+    this._canvas
+      .remove(...this._canvas.getObjects())
       .setBackgroundImage(new fabric.Image(img))
+      .setDimensions({width: imgWidth, height: imgHeight}, {backstoreOnly: true})
+      // .setDimensions({width: cssWidth, height: cssHeight}, {cssOnly: true})
       .renderAll();
+    // I couldn't change the canvas CSS size with setDimensions (cssOnly: true) in fabric.js, so set the CSS size directly.
+    $(this._canvas.lowerCanvasEl).css({width: cssWidth, height: cssHeight});
+    $(this._canvas.upperCanvasEl).css({width: cssWidth, height: cssHeight});
+    $(this._canvas.wrapperEl).css({width: cssWidth, height: cssHeight});
+
+    // Set line width scale.
+    this._lineScale = imgWidth / cssWidth;
+    // console.log(`LineScale: ${this._lineScale}`);
   }
 
   /**
    * Download canvas image.
    */
   download() {
-    const dataURL = this.canvas.toDataURL({format: this.mimetype, left: 0, top: 0});
+    const dataURL = this._canvas.toDataURL({format: this.mimetype, left: 0, top: 0});
     const bin = atob(dataURL.split(',')[1]);
     const buffer = new Uint8Array(bin.length);
     for (let i=0; i<bin.length; i++)
@@ -97,10 +136,10 @@ export default class {
    * Undo.
    */
   undo() {
-    if (!this.canvas._objects.length) return false;
-    this.isundo = true;
-    this.stack.push(this.canvas._objects.pop());
-    this.canvas.renderAll();
+    if (!this._canvas._objects.length) return false;
+    this._isUndo = true;
+    this._stack.push(this._canvas._objects.pop());
+    this._canvas.renderAll();
     return true;
   }
 
@@ -109,9 +148,9 @@ export default class {
    */
   redo() {
     if (!this.hasStack()) return false;
-    this.isredo = true;
-    this.isundo = false;
-    this.canvas.add(this.stack.pop());
+    this._isRedo = true;
+    this._isUndo = false;
+    this._canvas.add(this._stack.pop());
     return true;
   }
 
@@ -120,10 +159,10 @@ export default class {
    */
   reset() {
     // this.canvas.clear();
-    this.canvas.remove(...this.canvas.getObjects());
-    this.isundo = false;
-    this.isredo = false;
-    this.stack.length = 0;
+    this._canvas.remove(...this._canvas.getObjects());
+    this._isUndo = false;
+    this._isRedo = false;
+    this._stack.length = 0;
 
   }
 
@@ -131,21 +170,21 @@ export default class {
    * Returns TRUE if a stack exists.
    */
   hasStack() {
-    return this.stack.length > 0;
+    return this._stack.length > 0;
   }
 
   /**
    * Returns TRUE if there is a drawing object..
    */
   hasDrawingObject() {
-    return this.canvas._objects.length > 0;
+    return this._canvas._objects.length > 0;
   }
 
   /**
    * Initialization of the line drawing process..
    */
   _initDrawLine() {
-    const canvas = this.canvas;
+    const canvas = this._canvas;
     let line = undefined;
     let active = false;
     canvas
@@ -154,7 +193,7 @@ export default class {
         const pointer = canvas.getPointer(o.e);
         const points = [ pointer.x, pointer.y, pointer.x, pointer.y ];
         line = new fabric.Line(points, {
-          strokeWidth: parseInt(this.linewidthEl.val(), 10),
+          strokeWidth: parseInt(this._linewidthEl.val(), 10) * this._lineScale,
           fill: 'black',
           stroke: 'black',
           originX: 'center',
@@ -175,7 +214,7 @@ export default class {
    * Initialize the cursor to be displayed on the canvas.
    */
   _initCursor() {
-    const stage = $(this.canvas.getElement()).parent();
+    const stage = $(this._canvas.getElement()).parent();
     const cursor = $('<div />', { class: 'cursor' }).appendTo(stage);
     const follow = $('<div />', { class: 'follow' }).appendTo(stage);
     stage
@@ -190,15 +229,15 @@ export default class {
       })
       .on('wheel', event => {
         event.preventDefault();
-        let value = parseInt(this.linewidthEl.val(), 10) + (event.originalEvent.wheelDelta > 0 ? 1 : -1);
-        const min = parseInt(this.linewidthEl.attr('min'), 10);
-        const max = parseInt(this.linewidthEl.attr('max'), 10);
+        let value = parseInt(this._linewidthEl.val(), 10) + (event.originalEvent.wheelDelta > 0 ? 1 : -1);
+        const min = parseInt(this._linewidthEl.attr('min'), 10);
+        const max = parseInt(this._linewidthEl.attr('max'), 10);
         if (min > value) value = min;
         else if (max < value) value = max;
-        this.linewidthEl.val(value);
+        this._linewidthEl.val(value);
         follow.css({ width: value, height: value, left: -value / 2, top: -value / 2 });
       });
-    const value = parseInt(this.linewidthEl.val(), 10);
+    const value = parseInt(this._linewidthEl.val(), 10);
     follow.css({ width: value, height: value, left: -value / 2, top: -value / 2 });
   }
 }
