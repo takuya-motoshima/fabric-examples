@@ -13,7 +13,6 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
-  /*grid-template-columns: 150px 1fr;*/
   height: 100%;
 }
 
@@ -21,8 +20,7 @@ body {
     background: #333333;
   }
 
-  .main {
+  .canvas-wrapper {
     position: relative;
-    /*overflow: hidden;*/
-    overflow: auto;
+    overflow: hidden;
   }
