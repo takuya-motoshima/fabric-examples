@@ -1,0 +1,13 @@
+{
+  "name": "fabric-examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "Takuya Motoshima <developer.takuyamotoshima@gmail.com> (https://twitter.com/TakuyaMotoshima)",
+  "license": "MIT",
+  "dependencies": {
+    "fabric": "^4.3.0",
+    "hotkeys-js": "^3.9.4"
+  }
+}

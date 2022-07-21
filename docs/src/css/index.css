@@ -1,0 +1,10 @@
+.canvas-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.row,
+.row .card,
+.row .canvas-wrapper {
+  height: 100%;
+}
