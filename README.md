@@ -2,7 +2,8 @@
 Example of Canvas operation with fabric.
 
 Access the demo [here](https://takuya-motoshima.github.io/fabric-examples/).
-![demo.png](screencap/demo.png)
+![demo.png](https://raw.githubusercontent.com/takuya-motoshima/fabric-examples/master/screencap/demo.png)
+<!-- ![demo.png](screencap/demo.png) -->
 
 ## Documentation
 - [Demos — Fabric.js Javascript Canvas Library](http://fabricjs.com/demos/)
